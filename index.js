@@ -12,7 +12,7 @@ class Block{
         this.index = sha256(index);
         this.timestamp = sha256(new Date().toISOString().replace(/T/, ' ').      // replace T with a space
         replace(/\..+/, '')); 
-        this.data;
+        this.data = [];
         this.hash;
         this.prevHash;
     }
@@ -35,6 +35,7 @@ class Blockchain {
             return;
         }
         console.log("Er is geprobeerd iets raars toe te voegen aan de chain");
+        return;
     }
     createGenesisBlock(){
         let genesisBlock = new Block(this.chain.length);
@@ -46,7 +47,7 @@ class Blockchain {
     checkValidity(){
         for(let i = 1; i < this.chain.length; i++){
             if(this.chain[i].prevHash !== this.chain[i - 1].hash){
-                console.log("Deze chain is niet correct. Gemanipuleerd bij block: " + this.chain[i - 1].index);
+                console.log("Deze chain is niet correct. Gemanipuleerd bij block: " + (i -1));
                 return;
             }
         }
@@ -59,9 +60,13 @@ class Blockchain {
 let blockChain = new Blockchain();
 blockChain.createGenesisBlock();
 
+setInterval(function(){
+    blockChain.checkValidity();
+},3000);
+
 //Voeg nieuwe Block toe.
 let testBlock = new Block(blockChain.chain.length);
-testBlock.data = sha256(memeList[testBlock.index]);
+testBlock.data.push(sha256(memeList[testBlock.index]));
 testBlock.prevHash = blockChain.chain[blockChain.chain.length - 1].hash;
 testBlock.calculateHash(testBlock.data);
 blockChain.addBlock(testBlock);
@@ -73,7 +78,7 @@ console.log("test is geweest");
 
 //3de block.
 let testBlock3 = new Block(blockChain.chain.length);
-testBlock3.data = sha256(memeList[testBlock3.index]);
+testBlock3.data.push(sha256(memeList[testBlock3.index]));
 testBlock3.prevHash = blockChain.chain[blockChain.chain.length - 1].hash;
 testBlock3.calculateHash(testBlock3.data);
 blockChain.addBlock(testBlock3);
