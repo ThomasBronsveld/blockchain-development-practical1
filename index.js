@@ -9,19 +9,21 @@ let memeList = ['Donald Blimp Trump',
 class Block{
 
     constructor(index){
-        this.index = index;
-        this.timestamp = Date.now();
+        this.index = sha256(index);
+        this.timestamp = sha256(new Date().toISOString().replace(/T/, ' ').      // replace T with a space
+        replace(/\..+/, '')); 
         this.data;
         this.hash;
         this.prevHash;
     }
     
     calculateHash(){
-        this.hash = sha256(sha256(this.data));
+        this.hash = sha256(sha256(this.data, this.index, this.timestamp, this.prevHash));
     }
 }
 
-class Blockchain{
+class Blockchain {
+
     constructor(){
         this.chain = [];
     }
@@ -29,15 +31,16 @@ class Blockchain{
     addBlock(block){
         if(block instanceof Block){
             this.chain.push(block);
+            this.checkValidity();
             return;
         }
         console.log("Er is geprobeerd iets raars toe te voegen aan de chain");
     }
     createGenesisBlock(){
         let genesisBlock = new Block(this.chain.length);
-        genesisBlock.data = memeList[genesisBlock.index];
-        genesisBlock.calculateHash(genesisBlock.data);
+        genesisBlock.data = sha256(memeList[genesisBlock.index]);
         genesisBlock.prevHash = null;
+        genesisBlock.calculateHash(genesisBlock.data);
         this.chain.push(genesisBlock);
     }
     checkValidity(){
@@ -58,9 +61,9 @@ blockChain.createGenesisBlock();
 
 //Voeg nieuwe Block toe.
 let testBlock = new Block(blockChain.chain.length);
-testBlock.data = memeList[testBlock.index];
+testBlock.data = sha256(memeList[testBlock.index]);
+testBlock.prevHash = blockChain.chain[blockChain.chain.length - 1].hash;
 testBlock.calculateHash(testBlock.data);
-testBlock.prevHash = blockChain.chain[testBlock.index - 1].hash;
 blockChain.addBlock(testBlock);
 
 
@@ -70,15 +73,14 @@ console.log("test is geweest");
 
 //3de block.
 let testBlock3 = new Block(blockChain.chain.length);
-testBlock3.data = memeList[testBlock3.index];
+testBlock3.data = sha256(memeList[testBlock3.index]);
+testBlock3.prevHash = blockChain.chain[blockChain.chain.length - 1].hash;
 testBlock3.calculateHash(testBlock3.data);
-testBlock3.prevHash = blockChain.chain[testBlock3.index - 1].hash;
 blockChain.addBlock(testBlock3);
-console.log(blockChain.chain);
-blockChain.checkValidity();
 
-//Manipuleer data 2de block.
-blockChain.chain[1].data = memeList[memeList.length - 1];
+
+//Manipuleer data 2de block.=3-3
+blockChain.chain[1].data = sha256(memeList[memeList.length - 1]);
 blockChain.chain[1].calculateHash(blockChain.chain[1].data);
+
 console.log(blockChain.chain);
-blockChain.checkValidity();
