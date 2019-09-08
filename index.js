@@ -18,7 +18,7 @@ class Block{
     }
     
     calculateHash(){
-        this.hash = sha256(sha256(this.data, this.index, this.timestamp, this.prevHash));
+        this.hash = sha256(this.data, this.index, this.timestamp, this.prevHash);
     }
 }
 
