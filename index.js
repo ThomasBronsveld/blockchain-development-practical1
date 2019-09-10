@@ -41,8 +41,9 @@ class Blockchain {
     createGenesisBlock(){
         let genesisBlock = new Block(this.chain.length);
         genesisBlock.data.push(dataList[this.chain.length]);
-        genesisBlock.prevHash = sha256(null);
+        genesisBlock.prevHash = null;
         genesisBlock.calculateHash();
+        // this.addBlock(genesisBlock);
         this.chain.push(genesisBlock);
     }
     checkValidity(){
