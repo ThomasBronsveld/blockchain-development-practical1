@@ -1,6 +1,6 @@
 let sha256 = require('crypto-js/sha256');
 
-let memeList = ['Dit is een test', 
+let dataList = ['Dit is een test', 
     'Dit is een andere test', 
     'Ik ben Thomas Bronsveld',
     'Wij zijn team logisch'
@@ -40,7 +40,7 @@ class Blockchain {
     }
     createGenesisBlock(){
         let genesisBlock = new Block(this.chain.length);
-        genesisBlock.data.push(memeList[genesisBlock.index]);
+        genesisBlock.data.push(dataList[genesisBlock.index]);
         genesisBlock.prevHash = null;
         genesisBlock.calculateHash(genesisBlock.data);
         this.chain.push(genesisBlock);
@@ -67,14 +67,14 @@ setInterval(function(){
 
 //Voeg nieuwe Block toe.
 let testBlock = new Block(blockChain.chain.length);
-testBlock.data.push(memeList[testBlock.index]);
+testBlock.data.push(dataList[testBlock.index]);
 testBlock.prevHash = blockChain.chain[blockChain.chain.length - 1].hash;
 testBlock.calculateHash(testBlock.data);
 blockChain.addBlock(testBlock);
 
 //Manipuleer data 2de block.=3-3
 blockChain.chain[0].data = sha256("HAHAHAHAAHHA");
-blockChain.chain[0].calculateHash(blockChain.chain[1].data);
+blockChain.chain[0].calculateHash(blockChain.chain[0].data);
 
 let grn = "test";
 blockChain.addBlock(grn);
@@ -82,14 +82,14 @@ console.log("test is geweest");
 
 //3de block.
 let testBlock3 = new Block(blockChain.chain.length);
-testBlock3.data.push(memeList[testBlock3.index]);
+testBlock3.data.push(dataList[testBlock3.index]);
 testBlock3.prevHash = blockChain.chain[blockChain.chain.length - 1].hash;
 testBlock3.calculateHash(testBlock3.data);
 blockChain.addBlock(testBlock3);
 
 
 //Manipuleer data 2de block.=3-3
-blockChain.chain[1].data = sha256(memeList[memeList.length - 1]);
+blockChain.chain[1].data = sha256(dataList[dataList.length - 1]);
 blockChain.chain[1].calculateHash(blockChain.chain[1].data);
 
 console.log(blockChain.chain);
