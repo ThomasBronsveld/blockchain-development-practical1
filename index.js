@@ -10,8 +10,8 @@ class Block{
 
     constructor(index){
         this.index = sha256(index);
-        this.timestamp = sha256(new Date().toISOString().replace(/T/, ' ').      // replace T with a space
-        replace(/\..+/, '')); 
+        this.timestamp = new Date().toISOString().replace(/T/, ' ').      // replace T with a space
+        replace(/\..+/, ''); 
         this.data = [];
         this.hash;
         this.prevHash;
@@ -40,9 +40,9 @@ class Blockchain {
     }
     createGenesisBlock(){
         let genesisBlock = new Block(this.chain.length);
-        genesisBlock.data.push(dataList[genesisBlock.index]);
-        genesisBlock.prevHash = null;
-        genesisBlock.calculateHash(genesisBlock.data);
+        genesisBlock.data.push(dataList[this.chain.length]);
+        genesisBlock.prevHash = sha256(null);
+        genesisBlock.calculateHash();
         this.chain.push(genesisBlock);
     }
     checkValidity(){
@@ -69,27 +69,22 @@ setInterval(function(){
 let testBlock = new Block(blockChain.chain.length);
 testBlock.data.push(dataList[testBlock.index]);
 testBlock.prevHash = blockChain.chain[blockChain.chain.length - 1].hash;
-testBlock.calculateHash(testBlock.data);
+testBlock.calculateHash();
 blockChain.addBlock(testBlock);
-
-//Manipuleer data 2de block.=3-3
-blockChain.chain[0].data = sha256("HAHAHAHAAHHA");
-blockChain.chain[0].calculateHash(blockChain.chain[0].data);
 
 let grn = "test";
 blockChain.addBlock(grn);
-console.log("test is geweest");
 
 //3de block.
 let testBlock3 = new Block(blockChain.chain.length);
 testBlock3.data.push(dataList[testBlock3.index]);
 testBlock3.prevHash = blockChain.chain[blockChain.chain.length - 1].hash;
-testBlock3.calculateHash(testBlock3.data);
+testBlock3.calculateHash();
 blockChain.addBlock(testBlock3);
 
 
 //Manipuleer data 2de block.=3-3
 blockChain.chain[1].data = sha256(dataList[dataList.length - 1]);
-blockChain.chain[1].calculateHash(blockChain.chain[1].data);
+blockChain.chain[1].calculateHash();
 
 console.log(blockChain.chain);
