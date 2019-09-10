@@ -1,9 +1,9 @@
 let sha256 = require('crypto-js/sha256');
 
-let memeList = ['Donald Blimp Trump', 
-    'Belle Bathwater Delphine', 
-    'Boris Thought the coke was icing sugar Johnson',
-    'Thierry Wanneer heb je voor het laatst gehuild Baudet'
+let memeList = ['Dit is een test', 
+    'Dit is een andere test', 
+    'Ik ben Thomas Bronsveld',
+    'Wij zijn team logisch'
 ]
 
 class Block{
@@ -72,6 +72,9 @@ testBlock.prevHash = blockChain.chain[blockChain.chain.length - 1].hash;
 testBlock.calculateHash(testBlock.data);
 blockChain.addBlock(testBlock);
 
+//Manipuleer data 2de block.=3-3
+blockChain.chain[0].data = sha256("HAHAHAHAAHHA");
+blockChain.chain[0].calculateHash(blockChain.chain[1].data);
 
 let grn = "test";
 blockChain.addBlock(grn);
