@@ -1,91 +1,80 @@
-let sha256 = require('crypto-js/sha256');
+const crypto = require('crypto-js');
+SHA256 = require('crypto-js/sha256')
 
-let dataList = ['Dit is een test', 
-    'Dit is een andere test', 
-    'Ik ben Thomas Bronsveld',
-    'Wij zijn team logisch'
-]
-
-class Block{
-
-    constructor(index){
-        this.index = sha256(index);
-        this.timestamp = new Date().toISOString().replace(/T/, ' ').      // replace T with a space
-        replace(/\..+/, ''); 
-        this.data = [];
-        this.hash;
-        this.prevHash;
+class Block {
+    constructor(index, timestamp, data, prevhash){
+        this.index = index;
+        this.timestamp = timestamp;
+        this.data = data;
+        this.prevhash = prevhash;
+        this.hash = this.calculatehash();
+        this.nonce = 0;
     }
+
+    calculatehash(){
+        return SHA256(SHA256(this.index + this.prevhash + this.timestamp + this.data + this.nonce))
+    }
+    mineBlock(difficulty) {
+        console.log("mining block: " + this.index);
+        console.log("\n");
+        while (this.hash.toString().substring(0, difficulty) !== Array(difficulty + 1).join("0")) {
+            this.nonce++;
+            this.hash = this.calculatehash();
+        }
     
-    calculateHash(){
-        this.data = sha256(this.data);
-        this.hash = sha256(this.data, this.index, this.timestamp, this.prevHash);
+        console.log("block mined: " + this.hash);
+        console.log("\n");
+        console.log("block "+this.index+" is gemined op: "+this.timestamp);
+        console.log("block "+this.index+" heeft als data: "+this.data);
+        console.log("block "+this.index+" heeft als hash: "+this.hash);
+        console.log("block "+this.index+" heeft als prevhash: "+this.prevhash);
+        console.log("\n");
+        console.log("\n");
     }
 }
 
 class Blockchain {
-
     constructor(){
-        this.chain = [];
+        this.chain = [this.createGenesisBlock()];
+        this.difficulty = 4;
     }
 
-    addBlock(block){
-        if(block instanceof Block){
-            this.chain.push(block);
-            this.checkValidity();
-            return;
-        }
-        console.log("Er is geprobeerd iets raars toe te voegen aan de chain");
-        return;
-    }
     createGenesisBlock(){
-        let genesisBlock = new Block(this.chain.length);
-        genesisBlock.data.push(dataList[this.chain.length]);
-        genesisBlock.prevHash = null;
-        genesisBlock.calculateHash();
-        // this.addBlock(genesisBlock);
-        this.chain.push(genesisBlock);
+        return new Block(0, Date.now, "hello world", null);}
+
+
+    
+    addBlock(newBlock){
+            newBlock.prevhash = this.chain[this.chain.length -1].hash;
+            newBlock.hash = newBlock.calculatehash();
+            newBlock.mineBlock(this.difficulty);
+            this.chain.push(newBlock);
+            
     }
-    checkValidity(){
-        for(let i = 1; i < this.chain.length; i++){
-            if(this.chain[i].prevHash !== this.chain[i - 1].hash){
-                console.log("Deze chain is niet correct. Gemanipuleerd bij block: " + (i -1));
-                return;
+    chechvalid() {
+        
+        const currentBlock = this.chain[i];
+        const previousBlock = this.chain[i-1];
+
+        if (currentBlock.hash !== currentBlock.calculateHash()) {
+                return false;
             }
-        }
-        console.log("Deze chain is correct");
-        return;
+        
+            if (this.chain[this.chain.length] !== this.chain[this.chain.length - 1]) {
+                Console.log("Error nieuwe block is niet correct");
+            }
+
+        if (currentBlock.previousHash !== previousBlock.hash) {
+            return false;
+            }
+    
+
+        return true;
     }
 }
 
-//Zet de chain op.
-let blockChain = new Blockchain();
-blockChain.createGenesisBlock();
-
-setInterval(function(){
-    blockChain.checkValidity();
-},3000);
-
-//Voeg nieuwe Block toe.
-let testBlock = new Block(blockChain.chain.length);
-testBlock.data.push(dataList[testBlock.index]);
-testBlock.prevHash = blockChain.chain[blockChain.chain.length - 1].hash;
-testBlock.calculateHash();
-blockChain.addBlock(testBlock);
-
-let grn = "test";
-blockChain.addBlock(grn);
-
-//3de block.
-let testBlock3 = new Block(blockChain.chain.length);
-testBlock3.data.push(dataList[testBlock3.index]);
-testBlock3.prevHash = blockChain.chain[blockChain.chain.length - 1].hash;
-testBlock3.calculateHash();
-blockChain.addBlock(testBlock3);
-
-
-//Manipuleer data 2de block.=3-3
-blockChain.chain[1].data = sha256(dataList[dataList.length - 1]);
-blockChain.chain[1].calculateHash();
-
-console.log(blockChain.chain);
+let coin = new Blockchain();
+coin.addBlock(new Block(coin.chain.length, Date(Date.now()), "hey neal", coin.chain[coin.chain.length-1].hash));
+coin.addBlock(new Block(coin.chain.length, Date(Date.now()), "hey jonah", coin.chain[coin.chain.length-1].hash));
+coin.addBlock(new Block(coin.chain.length, Date(Date.now()), "hey danique", coin.chain[coin.chain.length-1].hash));
+coin.addBlock(new Block(coin.chain.length, Date(Date.now()), "hey nick", coin.chain[coin.chain.length-1].hash));
