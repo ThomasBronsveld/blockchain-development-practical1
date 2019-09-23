@@ -16,7 +16,10 @@
   "author": "team Logisch",
   "license": "ISC",
   "dependencies": {
-    "crypto-js": "^3.1.9-1"
+    "crypto-js": "^3.1.9-1",
+    "fs": "0.0.1-security",
+    "path": "^0.12.7",
+    "solc": "^0.5.11"
   },
   "devDependencies": {
     "nodemon": "^1.19.2"
